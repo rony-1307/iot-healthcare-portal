@@ -82,3 +82,4 @@ Werkzeug==3.0.4
 wsproto==1.2.0
 zipp==3.21.0
 zopfli==0.2.3.post1
+gunicorn==23.0.0

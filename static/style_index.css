@@ -1,0 +1,96 @@
+/*CSS file of index.html*/
+@import url('https://fonts.googleapis.com/css2?family=Rampart+One&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playball&family=Rampart+One&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playball&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Rampart+One&display=swap');
+@import url('https://fonts.googleapis.com/css?family=Josefin+Sans:300,400');
+
+*{
+    margin: 0;
+    padding: 0;
+}
+
+html,body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #b7d4fe;
+}
+
+header {
+    background-color: #003366;
+    color: /*#00ffc2;*/#b7d4fe;
+    padding: 10px 20px;
+  }
+  
+  .container-xxl {
+    display: flex;
+    text-align: center;
+  }
+
+.date-time {
+    font-style: italic;
+    font-size: 1rem;
+    font-weight: 800;
+}
+
+.title {
+    font-size: 35px;
+    font-weight: 800;
+    font-style: italic;
+}
+
+/* Container for the form */
+.login-container {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 350px;
+    margin: 20px auto; /* Center the login form */
+    text-align: center;
+}
+
+/* Styling for the form elements */
+input[type="text"], input[type="password"], select {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+/* Submit button styling */
+input[type="submit"] {
+    width: 100%;
+    padding: 10px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+/* Hover effect for the button */
+input[type="submit"]:hover {
+    background-color: #45a049;
+}
+
+/* Add a title above the form */
+h2 {
+    color: #333;
+    margin-bottom: 20px;
+}
+
+footer {
+    text-align: center;
+    padding: 10px;
+    font-weight: 700;
+    font-style: italic;
+    background-color: #003366;
+    color: /*#00ffc2;*/#b7d4fe;
+    position: fixed;
+    width: 100vw;
+    bottom: 0;
+}

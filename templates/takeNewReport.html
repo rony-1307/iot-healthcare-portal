@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Report</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f4f4f9;
+        }
+        .container {
+            margin: auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+        .search-bar {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        .btn-search {
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .btn-search:hover {
+            background-color: #45a049;
+        }
+        .patient-details {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+        .patient-details h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        .error-message {
+            color: red;
+            font-weight: bold;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Search Patient</h2>
+        <form method="POST">
+            <input type="text" name="patient_id" class="search-bar" placeholder="Enter Patient ID" required oninput="this.value = this.value.toUpperCase();">
+            <button type="submit" class="btn-search">Search</button>
+        </form>
+        {% if patient_details %}
+        <div class="patient-details">
+            <h3>Details of: {{ patient_details['name'] }}</h3>
+            <p>
+                <strong>Patient Id:</strong> {{ patient_details['pId'] }} &nbsp;&nbsp;&nbsp;&nbsp;
+                <strong>Age:</strong> {{ age }} &nbsp;&nbsp;&nbsp;&nbsp;
+                <strong>Gender:</strong> {{ patient_details['gender'] }} &nbsp;&nbsp;&nbsp;&nbsp;
+                <strong>Phone No:</strong> {{ patient_details['phoneNo'] }} &nbsp;&nbsp;&nbsp;&nbsp;
+                <strong>Email Id:</strong> {{ patient_details['emailId'] }} &nbsp;&nbsp;&nbsp;&nbsp;
+                <strong>Address:</strong> {{ patient_details['address'] }}
+            </p>
+        </div>
+        <div class="form-group">
+            <label for="doctor_name">Doctor Name: </label>
+            <input type="text" name="doctor_name" id="doctor_name" required oninput="this.value = this.value.toUpperCase();">
+        </div>
+        <div class="form-group">
+            <label for="test_date">Test Date:</label>
+            <input type="date" name="test_date" id="test_date" required>
+        </div>
+        <div class="form-group">
+            <label for="test_time">Test Time:</label>
+            <input type="time" name="test_time" id="test_time" required>
+        </div>
+        <div class="form-group">
+            <label for="patient_weight">Patient Weight:</label>
+            <input type="number" name="patient_weight" id="patient_weight" step="0.1" min="0" required 
+                   oninput="this.value = parseFloat(this.value).toFixed(1);">
+            Kg
+        </div>                
+        <div class="form-group">
+            <button id="takeDataButton" class="btn-search">Take Data</button>
+        </div>
+        <div class="form-group">
+            <h5>ECG Plot</h5>
+            <canvas id="dataChart" width="1500" height="200"></canvas>
+        </div>
+        <div class="form-group">
+            <div id="bpValue"><label for="bp_data">BP Value: N/A</label></div>
+        </div>
+        <div class="form-group">
+            <button id="printButton" style="display:none;">Print Report</button>
+        </div>
+        {% elif patient_details is none %}
+        <p class="error-message">Patient ID not found. Please check the ID and try again.</p>
+        {% endif %}
+        <a href="/takeNewReport" class="btn btn-primary">Back</a>
+    </div>
+
+    <script>
+        const labels = [];
+        const dataPoints = [];
+        const ctx = document.getElementById('dataChart').getContext('2d');
+        const dataChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'ECG Data',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    data: dataPoints,
+                    fill: true,
+                }]
+            },
+            options: {
+                scales: {
+                    x: {
+                        type: 'linear',
+                        position: 'bottom'
+                    }
+                }
+            }
+        });
+
+        let intervalId;
+
+        function fetchData() {
+            const patientId = "{{ patient_details['pId'] }}";
+            const testDate = document.getElementById('test_date').value;
+            const testTime = document.getElementById('test_time').value;
+            const doctorName = document.getElementById('doctor_name').value;
+            const patientWeight = document.getElementById('patient_weight').value;
+
+            fetch(`/data/${patientId}/${patientWeight}/${testDate}/${testTime}/${doctorName}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.ecg !== null) {
+                    labels.push(labels.length);
+                    dataPoints.push(data.ecg);
+                    dataChart.update();
+                }
+                if (data.bp !== null) {
+                    document.getElementById('bpValue').textContent = `Latest BP Value: ${data.bp.join(', ')}`;
+                    document.getElementById('printButton').style.display = 'block';
+                }
+            })
+            .catch(error => console.error('Error fetching data:', error));
+        }
+
+        document.getElementById('takeDataButton').addEventListener('click', function() {
+            this.disabled = true;
+            intervalId = setInterval(fetchData, 1); // Fetch data every second
+            this.textContent = "Collecting Data...";
+        });
+
+        // New print button functionality
+        document.getElementById('printButton').addEventListener('click', function() {
+            // Trigger the browser's print dialog to print the entire page
+            window.print();
+        });
+    </script>
+</body>
+</html>

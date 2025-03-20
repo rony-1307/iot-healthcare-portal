@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IoT Based Health Monitoring System</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" href="/static/style_index.css">
+    <style>
+        .container {
+            margin: auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            text-align: center;
+            color: #003366;
+        }
+        .patient-details {
+            margin: 20px;
+            padding: 5px;
+            background-color: #b7d4fe;
+            border-radius: 10px;
+            border: 15px solid #003366;
+            text-align: center;
+            color: #003366;
+        }
+        .patient-details h3 {
+            margin-top: 0;
+            color: #003366;
+        }
+        .table{
+            width: 80%;
+            margin: 2rem 0rem 2rem 4rem;
+            color: #003366;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+      <div class="container-xxl">
+          <div class="col-6">
+              <div class="date-time">
+                  Date: <span id="currentDate"></span><br>
+                  Time: <span id="currentTime"></span>
+              </div>
+          </div>
+          <div class="col-6">
+              <div class="title">IoT Based Health Monitoring System</div>
+          </div>
+      </div>
+    </header>
+
+        {% if patientDetials %}
+            <div class="patient-details">
+                <h3>Patient Name: {{ patientDetials['name'] }}</h3>
+                <p>
+                    <strong>Patient Id:</strong> {{ patientDetials['pId'] }} &nbsp;&nbsp;&nbsp;&nbsp;
+                    <strong>Age:</strong> {{ age }} Yrs. &nbsp;&nbsp;&nbsp;&nbsp;
+                    <strong>Gender:</strong> {{ patientDetials['gender'] }} &nbsp;&nbsp;&nbsp;&nbsp;
+                    <strong>Phone No:</strong> {{ patientDetials['phoneNo'] }} &nbsp;&nbsp;&nbsp;&nbsp;
+                    <strong>Email Id:</strong> {{ patientDetials['emailId'] }} &nbsp;&nbsp;&nbsp;&nbsp;
+                    <strong>Address:</strong> {{ patientDetials['address'] }}
+                </p>
+            </div>
+            <h2>Available Report</h2>
+                            
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Sl. No.</th>
+                            <th>Date</th>
+                            <th>Time</th>
+                            <th>Doctor Name</th>
+                            <th>View / Print Report</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for patientReportsRecord in patientReportsRecord %}
+                        <tr>
+                            <td>{{ loop.index }}</td>
+                            <td>{{ patientReportsRecord.testDate }}</td>
+                            <td>{{ patientReportsRecord.testTime }}</td>
+                            <td>{{ patientReportsRecord.doctorName }}</td>
+                            <td>
+                                <a href="/patientReportAnalysis/{{ patientDetials.pId }}/{{ loop.index }}" class="btn btn-info" target="_blank">View Full Details</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+        {% elif patientDetials is none %}
+            <p class="error-message">Patient ID not found. Please check the ID and try again.</p>
+        {% endif %}
+        <a href="/" class="btn btn-primary" id="restartBtn" onclick="restartApp()">Back</a>
+    </div>
+
+    <footer>
+        &copy; 2024 IoT Based Health Monitoring System
+    </footer>
+
+</body>
+<script>
+    function updateDateTime() {
+        const now = new Date();
+        const options = { year: 'numeric', month: 'long', day: 'numeric' };
+        document.getElementById('currentDate').innerText = now.toLocaleDateString(undefined, options);
+        document.getElementById('currentTime').innerText = now.toLocaleTimeString();
+    }
+
+    // Update date and time on page load
+    updateDateTime();
+
+    // Update every second
+    setInterval(updateDateTime, 1000);
+</script>
+</html>

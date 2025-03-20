@@ -110,7 +110,7 @@ def patientReportsRecord():
 @app.route('/patientReportAnalysis/<string:pId>/<int:id>', methods=['GET'])
 def view_report(pId, id):
     # Use context manager for MongoDB connection
-    db = iot_health_database_local()
+    db = iot_health_database_online()
     collection = db['patient_db']
 
     patientDetails = collection.find_one({"pId": pId})

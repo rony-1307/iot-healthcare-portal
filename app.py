@@ -89,7 +89,7 @@ def patientReportsRecord():
   age = None
   try:
     if request.method == 'POST':
-      db = iot_health_database_local()
+      db = iot_health_database_online()
       collection = db['patient_db']
       patientId = request.form['patient_id']
       patientDetials = collection.find_one({"pId": patientId})
